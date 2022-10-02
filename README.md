@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    modImplementation include("com.github.moehreag:search-in-resources:0.0.1")
+    modImplementation include("com.github.moehreag:search-in-resources:1.0.0")
 }
 ```
 

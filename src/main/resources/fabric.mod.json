@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "search-in-resources",
+  "version": "${version}",
+  "name": "Search in Resources",
+  "description": "Allows to search for a specific pattern in resource filenames, just like in newer versions.",
+  "authors": [
+    "moehreag"
+  ],
+  "contact": {
+    "homepage": "https://github.com/moehreag",
+    "sources": "https://github.com/moehreag/search-in-resources"
+  },
+  "license": "MIT",
+  "icon": "assets/search-in-resources/icon.png",
+  "environment": "*",
+  "entrypoints": {},
+  "mixins": [
+    "search-in-resources.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.12.0",
+    "minecraft": "1.8.9"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}

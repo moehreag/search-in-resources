@@ -29,7 +29,7 @@ public abstract class ReloadableResourceManagerImplMixin implements SearchableRe
     @Shadow @Final private static Logger LOGGER;
 
     @Override
-    public Map<Identifier, Resource> findResources(String startingPath, Predicate<Identifier> allowedPathPredicate) {
+    public Map<Identifier, Resource> findResources(String namespace, String startingPath, Predicate<Identifier> allowedPathPredicate) {
         Map<Identifier, Resource> map = new LinkedHashMap<>();
 
         try {
@@ -39,7 +39,10 @@ public abstract class ReloadableResourceManagerImplMixin implements SearchableRe
 
                     for(Object s : pack.getNamespaces()) {
                         if(s instanceof String) {
-                            search((String) s, pack, startingPath, allowedPathPredicate, manager, map);
+                            search(namespace.isEmpty() ? (String) s:namespace, pack, startingPath, allowedPathPredicate, manager, map);
+                            if(!namespace.isEmpty()){
+                                break;
+                            }
                         }
                     }
 

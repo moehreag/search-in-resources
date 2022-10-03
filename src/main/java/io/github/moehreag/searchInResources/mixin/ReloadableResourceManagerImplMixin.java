@@ -70,7 +70,7 @@ public abstract class ReloadableResourceManagerImplMixin implements SearchableRe
                 }
             }
         } else {
-            File base = new File("resourcepacks/" + pack.getName() + "/" + AbstractFileResourcePackAccessor.callGetFilename(new Identifier(startingPath, "")));
+            File base = new File("resourcepacks/" + pack.getName() + "/" + AbstractFileResourcePackAccessor.callGetFilename(new Identifier(s, startingPath)));
 
             //System.out.println("Searching in Resource Pack " + pack.getName() + " Available Namespaces: " + s + " Base File: " + base.getAbsolutePath());
 

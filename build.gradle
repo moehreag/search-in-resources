@@ -19,6 +19,12 @@ repositories {
 
 loom {
 	setIntermediaryUrl('https://maven.legacyfabric.net/net/legacyfabric/intermediary/%1$s/intermediary-%1$s-v2.jar');
+
+	runs {
+		client {
+			programArgs "--userProperties", "{}"
+		}
+	}
 }
 
 def lwjgl2 = !project.minecraft_version.startsWith("1.13")

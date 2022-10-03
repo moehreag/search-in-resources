@@ -37,9 +37,10 @@ public abstract class ReloadableResourceManagerImplMixin implements SearchableRe
                 for (ResourcePack pack : ((FallbackResourceManagerAccessor) manager).getResourcePacks().stream().filter(resourcePack ->
                         !(resourcePack instanceof DefaultResourcePack)).collect(Collectors.toList())) {
 
-                    for(String s : pack.getNamespaces()) {
-                        search(s, pack, startingPath, allowedPathPredicate, manager, map);
-
+                    for(Object s : pack.getNamespaces()) {
+                        if(s instanceof String) {
+                            search((String) s, pack, startingPath, allowedPathPredicate, manager, map);
+                        }
                     }
 
                 }
@@ -62,13 +63,13 @@ public abstract class ReloadableResourceManagerImplMixin implements SearchableRe
                         searchInZipFiles(map, s, e, allowedPathPredicate, manager, file, startingPath);
                     }
                 } catch (Exception ignored){
-                    //e.printStackTrace();
+                    //ignored.printStackTrace();
                 }
             }
         } else {
             File base = new File("resourcepacks/" + pack.getName() + "/" + AbstractFileResourcePackAccessor.callGetFilename(new Identifier(startingPath, "")));
 
-            //System.out.println("Searching in Resource Pack " + pack.getName() + " Available Namespaces: " + s + " Base File: " + base.getAbsolutePath());
+            System.out.println("Searching in Resource Pack " + pack.getName() + " Available Namespaces: " + s + " Base File: " + base.getAbsolutePath());
 
             if (base.toString().contains(".zip")) {
                 try (ZipFile file = new ZipFile(base.toString().split(".zip")[0] + ".zip")) {
@@ -78,23 +79,24 @@ public abstract class ReloadableResourceManagerImplMixin implements SearchableRe
                         searchInZipFiles(map, s, e, allowedPathPredicate, manager, file, startingPath);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
-            }
+            } else {
 
-            File[] files = base.listFiles((dir, name) -> allowedPathPredicate.test(new Identifier(dir.getName(), name)));
-            //System.out.println("Exists " + base.exists() + " Dir: " + base.isDirectory() + " Contents: " + Arrays.toString(base.listFiles()));
-            if (files != null) {
-                List<File> list = Arrays.stream(files).sorted().collect(Collectors.toList());
-                //System.out.println("Pack " + pack.getName() + " contains files " + Arrays.toString(files));
-                for (File f : list) {
-                    Identifier id = new Identifier(startingPath, f.getName());
-                    map.put(id, new ResourceImpl("", id, Files.newInputStream(f.toPath()), new InputStream() {
-                        @Override
-                        public int read() {
-                            return 0;
-                        }
-                    }, ((FallbackResourceManagerAccessor) manager).getSerializer()));
+                File[] files = base.listFiles((dir, name) -> allowedPathPredicate.test(new Identifier(dir.getName(), name)));
+                System.out.println("Exists " + base.exists() + " Dir: " + base.isDirectory() + " Contents: " + Arrays.toString(base.listFiles()));
+                if (files != null) {
+                    List<File> list = Arrays.stream(files).sorted().collect(Collectors.toList());
+                    System.out.println("Pack " + pack.getName() + " contains files " + Arrays.toString(files));
+                    for (File f : list) {
+                        Identifier id = new Identifier(startingPath, f.getName());
+                        map.put(id, new ResourceImpl(id, Files.newInputStream(f.toPath()), new InputStream() {
+                            @Override
+                            public int read() {
+                                return 0;
+                            }
+                        }, ((FallbackResourceManagerAccessor) manager).getSerializer()));
+                    }
                 }
             }
         }
@@ -110,7 +112,7 @@ public abstract class ReloadableResourceManagerImplMixin implements SearchableRe
                             new InputStreamReader(root.getInputStream(zipEntry), StandardCharsets.UTF_8))
                             .lines()
                             .collect(Collectors.joining("\n"));
-                    map.put(id, new ResourceImpl("", id, IOUtils.toInputStream(text), new InputStream() {
+                    map.put(id, new ResourceImpl(id, IOUtils.toInputStream(text), new InputStream() {
                         @Override
                         public int read() {
                             return 0;

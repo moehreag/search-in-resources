@@ -72,7 +72,7 @@ public abstract class ReloadableResourceManagerImplMixin implements SearchableRe
         } else {
             File base = new File("resourcepacks/" + pack.getName() + "/" + AbstractFileResourcePackAccessor.callGetFilename(new Identifier(startingPath, "")));
 
-            System.out.println("Searching in Resource Pack " + pack.getName() + " Available Namespaces: " + s + " Base File: " + base.getAbsolutePath());
+            //System.out.println("Searching in Resource Pack " + pack.getName() + " Available Namespaces: " + s + " Base File: " + base.getAbsolutePath());
 
             if (base.toString().contains(".zip")) {
                 try (ZipFile file = new ZipFile(base.toString().split(".zip")[0] + ".zip")) {
@@ -87,10 +87,10 @@ public abstract class ReloadableResourceManagerImplMixin implements SearchableRe
             } else {
 
                 File[] files = base.listFiles((dir, name) -> allowedPathPredicate.test(new Identifier(dir.getName(), name)));
-                System.out.println("Exists " + base.exists() + " Dir: " + base.isDirectory() + " Contents: " + Arrays.toString(base.listFiles()));
+                //System.out.println("Exists " + base.exists() + " Dir: " + base.isDirectory() + " Contents: " + Arrays.toString(base.listFiles()));
                 if (files != null) {
                     List<File> list = Arrays.stream(files).sorted().collect(Collectors.toList());
-                    System.out.println("Pack " + pack.getName() + " contains files " + Arrays.toString(files));
+                    //System.out.println("Pack " + pack.getName() + " contains files " + Arrays.toString(files));
                     for (File f : list) {
                         Identifier id = new Identifier(startingPath, f.getName());
                         map.put(id, new ResourceImpl(id, Files.newInputStream(f.toPath()), new InputStream() {

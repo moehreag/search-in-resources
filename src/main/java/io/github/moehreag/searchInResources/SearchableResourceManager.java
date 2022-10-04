@@ -9,5 +9,9 @@ import java.util.function.Predicate;
 
 public interface SearchableResourceManager extends ResourceManager {
 
-    Map<Identifier, Resource> findResources(String startingPath, Predicate<Identifier> allowedPathPredicate);
+    default Map<Identifier, Resource> findResources(String startingPath, Predicate<Identifier> allowedPathPredicate){
+        return findResources("", startingPath, allowedPathPredicate);
+    }
+
+    Map<Identifier, Resource> findResources(String namespace, String startingPath, Predicate<Identifier> allowedPathPredicate);
 }

@@ -100,15 +100,15 @@ public abstract class ReloadableResourceManagerImplMixin implements SearchableRe
                 if(debug) {
                     searchLogger.info("Pack " + pack.getName() + " contains files " + Arrays.toString(files));
                 }
-                searchInDirectory(list, startingPath, map, manager, allowedPathPredicate);
+                searchInDirectory(list, startingPath, map, manager, allowedPathPredicate, s);
             }
         }
     }
 
-    private static void searchInDirectory(List<File> list, String startingPath, Map<Identifier, Resource> map, FallbackResourceManager manager, Predicate<Identifier> allowedPathPredicate) throws IOException {
+    private static void searchInDirectory(List<File> list, String startingPath, Map<Identifier, Resource> map, FallbackResourceManager manager, Predicate<Identifier> allowedPathPredicate, String namespace) throws IOException {
         for (File f : list) {
             if(!f.isDirectory()) {
-                Identifier id = new Identifier(startingPath, f.getName());
+                Identifier id = new Identifier(namespace, startingPath +"/"+ f.getName());
                 map.put(id, new ResourceImpl("", id, Files.newInputStream(f.toPath()), new InputStream() {
                     @Override
                     public int read() {
@@ -122,7 +122,7 @@ public abstract class ReloadableResourceManagerImplMixin implements SearchableRe
                     }
                     return true;
                 });
-                searchInDirectory(Arrays.stream(arr != null? arr : new File[0]).sorted().collect(Collectors.toList()), startingPath, map, manager, allowedPathPredicate);
+                searchInDirectory(Arrays.stream(arr != null? arr : new File[0]).sorted().collect(Collectors.toList()), startingPath+"/"+f.getName(), map, manager, allowedPathPredicate, namespace);
             }
         }
     }

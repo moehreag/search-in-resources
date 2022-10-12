@@ -27,9 +27,11 @@ public abstract class ReloadableResourceManagerImplMixin implements SearchableRe
     @Shadow @Final private Map<String, FallbackResourceManager> fallbackManagers;
 
     @Shadow @Final private static Logger LOGGER;
+    private boolean debug;
 
     @Override
-    public Map<Identifier, Resource> findResources(String namespace, String startingPath, Predicate<Identifier> allowedPathPredicate) {
+    public Map<Identifier, Resource> findResources(String namespace, String startingPath, Predicate<Identifier> allowedPathPredicate, boolean debug) {
+        this.debug = debug;
         Map<Identifier, Resource> map = new LinkedHashMap<>();
 
         try {
@@ -69,10 +71,12 @@ public abstract class ReloadableResourceManagerImplMixin implements SearchableRe
                     //ignored.printStackTrace();
                 }
             }
-        } else {
+        }  else {
             File base = new File("resourcepacks/" + pack.getName() + "/" + AbstractFileResourcePackAccessor.callGetFilename(new Identifier(s, startingPath)));
 
-            //System.out.println("Searching in Resource Pack " + pack.getName() + " Available Namespaces: " + s + " Base File: " + base.getAbsolutePath());
+            if(debug) {
+                searchLogger.info("Searching in Resource Pack " + pack.getName() + " Available Namespaces: " + s + " Base File: " + base.getAbsolutePath());
+            }
 
             if (base.toString().contains(".zip")) {
                 try (ZipFile file = new ZipFile(base.toString().split(".zip")[0] + ".zip")) {
@@ -82,30 +86,50 @@ public abstract class ReloadableResourceManagerImplMixin implements SearchableRe
                         searchInZipFiles(map, s, e, allowedPathPredicate, manager, file, startingPath);
                     }
                 } catch (Exception e) {
-                    //e.printStackTrace();
+                    e.printStackTrace();
                 }
-            } else {
+            }
 
-                File[] files = base.listFiles((dir, name) -> allowedPathPredicate.test(new Identifier(dir.getName(), name)));
-                //System.out.println("Exists " + base.exists() + " Dir: " + base.isDirectory() + " Contents: " + Arrays.toString(base.listFiles()));
-                if (files != null) {
-                    List<File> list = Arrays.stream(files).sorted().collect(Collectors.toList());
-                    //System.out.println("Pack " + pack.getName() + " contains files " + Arrays.toString(files));
-                    for (File f : list) {
-                        Identifier id = new Identifier(startingPath, f.getName());
-                        map.put(id, new ResourceImpl(id, Files.newInputStream(f.toPath()), new InputStream() {
-                            @Override
-                            public int read() {
-                                return 0;
-                            }
-                        }, ((FallbackResourceManagerAccessor) manager).getSerializer()));
-                    }
+            File[] files = base.listFiles((dir, name) -> {
+                if(!dir.toPath().resolve(name).toFile().isDirectory()) {
+                    return allowedPathPredicate.test(new Identifier(dir.getName(), name));
                 }
+                return true;
+            });
+            //System.out.println("Exists " + base.exists() + " Dir: " + base.isDirectory() + " Contents: " + Arrays.toString(base.listFiles()));
+            if (files != null) {
+                List<File> list = Arrays.stream(files).sorted().collect(Collectors.toList());
+                if(debug) {
+                    searchLogger.info("Pack " + pack.getName() + " contains files " + Arrays.toString(files));
+                }
+                searchInDirectory(list, startingPath, map, manager, allowedPathPredicate, s);
             }
         }
     }
 
-    private static void searchInZipFiles(Map<Identifier, Resource> map, String namespace, ZipEntry zipEntry, Predicate<Identifier> predicate, FallbackResourceManager manager, ZipFile root, String start){
+    private void searchInDirectory(List<File> list, String startingPath, Map<Identifier, Resource> map, FallbackResourceManager manager, Predicate<Identifier> allowedPathPredicate, String namespace) throws IOException {
+        for (File f : list) {
+            if(!f.isDirectory()) {
+                Identifier id = new Identifier(namespace, startingPath +"/"+ f.getName());
+                map.put(id, new ResourceImpl( id, Files.newInputStream(f.toPath()), new InputStream() {
+                    @Override
+                    public int read() {
+                        return 0;
+                    }
+                }, ((FallbackResourceManagerAccessor) manager).getSerializer()));
+            } else {
+                File[] arr = f.listFiles((dir, name) -> {
+                    if(!dir.toPath().resolve(name).toFile().isDirectory()) {
+                        return allowedPathPredicate.test(new Identifier(dir.getName(), name));
+                    }
+                    return true;
+                });
+                searchInDirectory(Arrays.stream(arr != null? arr : new File[0]).sorted().collect(Collectors.toList()), startingPath+"/"+f.getName(), map, manager, allowedPathPredicate, namespace);
+            }
+        }
+    }
+
+    private void searchInZipFiles(Map<Identifier, Resource> map, String namespace, ZipEntry zipEntry, Predicate<Identifier> predicate, FallbackResourceManager manager, ZipFile root, String start){
 
         if(!zipEntry.isDirectory()){
             Identifier id = new Identifier(namespace, zipEntry.getName());
@@ -122,7 +146,7 @@ public abstract class ReloadableResourceManagerImplMixin implements SearchableRe
                         }
                     }, ((FallbackResourceManagerAccessor) manager).getSerializer()));
                 } catch (Exception e){
-                    LOGGER.info("Couldn't add Entry "+zipEntry.getName());
+                    LOGGER.info("Couldn't add Entry " + zipEntry.getName());
                     //e.printStackTrace();
                 }
             }

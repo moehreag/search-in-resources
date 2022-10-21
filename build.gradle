@@ -1,6 +1,7 @@
 plugins {
 	id 'fabric-loom' version "1.0-SNAPSHOT" // To use chocoloom, change the version to a commit hash
 	id 'maven-publish'
+	id 'signing'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -101,9 +102,14 @@ publishing {
 		}
 	}
 
-	// select the repositories you want to publish to
 	repositories {
-		// uncomment to publish to the local maven
-		// mavenLocal()
+		maven {
+			name = "owlMaven"
+			url = "https://moehreag.duckdns.org/maven/releases"
+			credentials(PasswordCredentials)
+			authentication {
+				basic(BasicAuthentication)
+			}
+		}
 	}
 }

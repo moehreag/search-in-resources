@@ -11,13 +11,12 @@ Add to your gradle build script:
 ```groovy
 repositories {
     maven {
-        name = "JitPack"
-        url = "https://jitpack.io"
+        url "https://moehreag.duckdns.org/maven/releases"
     }
 }
 
 dependencies {
-    modImplementation include("com.github.moehreag:search-in-resources:1.0.+")
+    modImplementation include("io.github.moehreag:search-in-resources:1.0.+")
 }
 ```
 

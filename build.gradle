@@ -10,7 +10,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 base {
 	archivesName = project.archives_base_name
 }
-version = "${project.version}+mc${project.minecraft_version}"
+
 group = project.maven_group
 
 repositories {

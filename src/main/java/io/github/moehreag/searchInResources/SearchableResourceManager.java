@@ -1,8 +1,8 @@
 package io.github.moehreag.searchInResources;
 
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.resource.Resource;
+import net.minecraft.client.resource.manager.ResourceManager;
+import net.minecraft.resource.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

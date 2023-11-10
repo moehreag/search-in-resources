@@ -1,61 +1,29 @@
 plugins {
-	id 'fabric-loom' version "1.0-SNAPSHOT" // To use chocoloom, change the version to a commit hash
+	id 'fabric-loom' version '1.4-SNAPSHOT'
+	id 'ploceus' version '1.4-SNAPSHOT'
 	id 'maven-publish'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-archivesBaseName = project.archives_base_name
-version = project.mod_version
+base {
+	archivesName = project.archives_base_name
+}
+version = "${project.version}+mc${project.minecraft_version}"
 group = project.maven_group
 
 repositories {
-	maven {
-		name = "legacy-fabric"
-		url = "https://maven.legacyfabric.net"
-	}
-}
 
-loom {
-	setIntermediaryUrl('https://maven.legacyfabric.net/net/legacyfabric/intermediary/%1$s/intermediary-%1$s-v2.jar');
 }
-
-def lwjgl2 = !project.minecraft_version.startsWith("1.13")
-def currentOs = System.getProperty("os.name").toLowerCase(Locale.ENGLISH)
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.legacyfabric:yarn:${project.yarn_mappings}:v2"
+	mappings "net.ornithemc:feather:${project.minecraft_version}+build.${project.feather_mappings}"
+
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	// Fabric API provides hooks for events, item registration, and more. As most mods will need this, it's included by default. 
-	// If you know for a fact you don't, it's not required and can be safely removed.
-	modImplementation ("net.legacyfabric.legacy-fabric-api:legacy-fabric-api:${fabric_version}") {
- 		exclude module: "legacy-fabric-entity-events-v1"
- 	}
-
-	if (lwjgl2) {
-		if (currentOs.contains("mac")) {
-			implementation 'org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209'
-			implementation 'org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209'
-			implementation 'org.lwjgl.lwjgl:lwjgl-platform:2.9.4-nightly-20150209'
-		}
-	}
-}
-
-if (lwjgl2) {
-	if (currentOs.contains("mac")) {
-		configurations.all {
-			resolutionStrategy {
-				dependencySubstitution {
-					substitute module('org.lwjgl.lwjgl:lwjgl_util:2.9.2-nightly-201408222') using module('org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209')
-					substitute module('org.lwjgl.lwjgl:lwjgl:2.9.2-nightly-201408222') using module('org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209')
-				}
-				force 'org.lwjgl.lwjgl:lwjgl-platform:2.9.4-nightly-20150209'
-			}
-		}
-	}
+	ploceus.dependOsl(project.osl_version)
 }
 
 processResources {

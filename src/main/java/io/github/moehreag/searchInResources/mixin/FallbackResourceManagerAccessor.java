@@ -1,19 +1,19 @@
 package io.github.moehreag.searchInResources.mixin;
 
-import net.minecraft.client.resource.FallbackResourceManager;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.util.MetadataSerializer;
+import java.util.List;
+
+import net.minecraft.client.resource.manager.FallbackResourceManager;
+import net.minecraft.client.resource.metadata.ResourceMetadataSerializerRegistry;
+import net.minecraft.client.resource.pack.ResourcePack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
-
-import java.util.List;
 
 @Mixin(FallbackResourceManager.class)
 public interface FallbackResourceManagerAccessor {
 
-    @Accessor
+    @Accessor("fallbacks")
     List<ResourcePack> getResourcePacks();
 
-    @Accessor
-    MetadataSerializer getSerializer();
+    @Accessor("metadataSerializers")
+    ResourceMetadataSerializerRegistry getSerializer();
 }

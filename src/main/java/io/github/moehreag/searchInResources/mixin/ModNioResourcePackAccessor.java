@@ -1,14 +1,20 @@
 package io.github.moehreag.searchInResources.mixin;
 
-import net.legacyfabric.fabric.impl.resource.loader.ModNioResourcePack;
+import java.nio.file.Path;
+import java.util.List;
+
+import net.fabricmc.loader.api.ModContainer;
+import net.ornithemc.osl.resource.loader.api.ModResourcePack;
+import net.ornithemc.osl.resource.loader.impl.BuiltInModResourcePack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import java.nio.file.Path;
-
-@Mixin(ModNioResourcePack.class)
+@Mixin(BuiltInModResourcePack.class)
 public interface ModNioResourcePackAccessor {
 
     @Accessor(remap = false)
-    Path getBasePath();
+    List<Path> getRoots();
+
+    @Accessor(remap = false)
+    ModContainer getMod();
 }

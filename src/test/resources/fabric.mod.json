@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "search-in-resources",
+	"id": "search-in-resources-test",
 	"version": "${version}",
 	"name": "Search in Resources",
 	"description": "Allows to search for a specific pattern in resource filenames, just like in newer versions.",
@@ -14,19 +14,15 @@
 	"license": "MIT",
 	"icon": "assets/search-in-resources/icon.png",
 	"environment": "*",
-	"entrypoints": {},
+	"entrypoints": {
+		"init": [
+			"io.github.moehreag.searchInResources.SearchingTest"
+		]
+	},
 	"mixins": [
-		"search-in-resources.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.12.0",
 		"minecraft": "*"
-	},
-	"custom": {
-		"loom:injected_interfaces": {
-			"net/minecraft/unmapped/C_6577431": [
-				"io/github/moehreag/searchInResources/SearchableResourceManager"
-			]
-		}
 	}
 }

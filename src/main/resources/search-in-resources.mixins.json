@@ -6,9 +6,9 @@
   "mixins": [
   ],
   "client": [
-    "AbstractFileResourcePackAccessor",
+    "CustomResourcePackAccessor",
     "FallbackResourceManagerAccessor",
-    "ModNioResourcePackAccessor",
+    "BuiltInModResourcePackAccessor",
     "ReloadableResourceManagerImplMixin"
   ],
   "injectors": {

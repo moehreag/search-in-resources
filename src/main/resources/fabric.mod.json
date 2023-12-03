@@ -21,5 +21,12 @@
 	"depends": {
 		"fabricloader": ">=0.12.0",
 		"minecraft": "*"
+	},
+	"custom": {
+		"loom:injected_interfaces": {
+			"net/minecraft/unmapped/C_6577431": [
+				"io/github/moehreag/searchInResources/SearchableResourceManager"
+			]
+		}
 	}
 }

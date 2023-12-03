@@ -5,7 +5,6 @@ import java.util.function.Predicate;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resource.Resource;
-import net.minecraft.client.resource.manager.ResourceManager;
 import net.minecraft.resource.Identifier;
 import net.ornithemc.osl.entrypoints.api.ModInitializer;
 import net.ornithemc.osl.resource.loader.api.ResourceLoaderEvents;
@@ -24,9 +23,8 @@ public class SearchingTest implements ModInitializer {
 	}
 
 	private void runTest(String namespace, String start, Predicate<Identifier> predicate){
-		ResourceManager manager = Minecraft.getInstance().getResourceManager();
 		System.out.printf("-----##### Running Test in namespace %s, Start: %s%n", namespace, start);
-		Map<Identifier, Resource> map = ((SearchableResourceManager)manager).findResources(namespace, start, predicate);
+		Map<Identifier, Resource> map = Minecraft.getInstance().getResourceManager().findResources(namespace, start, predicate);
 		map.keySet().forEach(System.out::println);
 		System.out.println("-----##### Finished Test!");
 	}

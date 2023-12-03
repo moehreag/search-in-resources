@@ -9,7 +9,8 @@
     "CustomResourcePackAccessor",
     "FallbackResourceManagerAccessor",
     "BuiltInModResourcePackAccessor",
-    "ReloadableResourceManagerImplMixin"
+    "ReloadableResourceManagerImplMixin",
+    "ResourceManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

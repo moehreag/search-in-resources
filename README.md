@@ -29,7 +29,7 @@ but since you'll probably have a IdentifiableResourceReloadListener that won't b
 public class YourReloadListener implements IdentifiableResourceReloadListener {
     @Override
     public void reload(ResourceManager resourceManager) {
-        resourceManager.findResources(...);
+		((SearchableResourceManager)resourceManager).findResources(/*...*/);
     }
 }
 ```

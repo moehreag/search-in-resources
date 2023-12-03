@@ -5,9 +5,10 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import net.minecraft.client.resource.Resource;
+import net.minecraft.client.resource.manager.ResourceManager;
 import net.minecraft.resource.Identifier;
 
-public interface SearchableResourceManager {
+public interface SearchableResourceManager extends ResourceManager {
 
 	default Map<Identifier, Resource> findResources(String startingPath, Predicate<Identifier> allowedPathPredicate) {
 		return findResources("", startingPath, allowedPathPredicate);
